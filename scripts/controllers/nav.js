@@ -8,7 +8,7 @@
  * Controller of the appApp
  */
 angular.module('appApp')
-  .controller('NavCtrl', function ($scope, $cookieStore, $location) {
+  .controller('NavCtrl', function ($scope, $cookieStore, $location,$route,$window) {
 
     var usuario = $cookieStore.get('user');
     $scope.estaConectado=$cookieStore.get('estaConectado');
@@ -38,6 +38,7 @@ angular.module('appApp')
 
 
     $scope.salir = function(){
+		 delete $window.sessionStorage.token;
       $scope.usrConectado = {nombre:"", user:'', admin: '', cliente:'', estaConectado:false};
       $cookieStore.remove('estaConectado');
       $cookieStore.remove('user');

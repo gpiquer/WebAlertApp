@@ -8,7 +8,8 @@
  * Controller of the appApp
  */
 angular.module('appApp')
-  .controller('LoginCtrl', function ($scope, $q, TareasResourse, $log, $cookieStore, $location) {
+  .controller('LoginCtrl', function ($scope, $q, TareasResourse, $log, $cookieStore,$window, $location) {
+	 delete $window.sessionStorage.token;
     var inicioSesion = $q.defer();
     $scope.errormsj =false;
 
@@ -18,6 +19,7 @@ angular.module('appApp')
       if(usr.nombre != 'wrong'){
         $scope.usrConectado.nombre = usr.nombres;
         $scope.usrConectado.user = usr.username;
+		  $window.sessionStorage.token = usr.token; 
 
         var adm = false;
         var clt = false;

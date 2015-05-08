@@ -43,7 +43,7 @@ angular
         var usuario = $cookieStore.get('user');
         //SI esta conectado y intenta entrar al login lo enviamos a menu
         if(next.templateUrl == 'views/login.html'){
-          $location.path('/menu')
+          $location.path('/menu'); 
         }
       }
     });
@@ -115,25 +115,25 @@ angular
       .otherwise({
         redirectTo: '/'
       });
-  }).factory('authHttpResponseInterceptor', ['$q', '$location', function ($q, $location) {
-    return {
-      response: function (response) {
-        if (response.status === 401) {
-          console.log("Response 401");
-        }
-        return response || $q.when(response);
-      },
-      responseError: function (rejection) {
-        if (rejection.status === 401) {
-          console.log("Response Error 401", rejection);
-          alert('Login Incorrecto.');
-          // $location.path('/login').search('returnTo', $location.path());
-        }
-        return $q.reject(rejection);
+  })
+	.factory('authInterceptor', function ($rootScope, $q, $window) {
+  return {
+    request: function (config) {
+      config.headers = config.headers || {};
+      if ($window.sessionStorage.token) {
+        config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
       }
+      return config;
+    },
+    response: function (response) {
+      if (response.status === 401) {
+        // handle the case where the user is not authenticated
+      }
+      return response || $q.when(response);
     }
-  }])
-  .config(['$httpProvider', function ($httpProvider) {
-    //Http Intercpetor to check auth failures for xhr requests
-    $httpProvider.interceptors.push('authHttpResponseInterceptor');
-  }]);
+  };
+})
+
+.config(function ($httpProvider) {
+  $httpProvider.interceptors.push('authInterceptor');
+});
